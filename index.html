@@ -1,0 +1,32 @@
+<script>
+    async function post() {
+    let url = "http://localhost:5000/api/user/signup";
+    const data = {
+        user_name: "Ghs Julian",
+        user_email: "ghsjulian@gmail.com",
+        user_password: "123456",
+        user_avtar: "ghs_julian.png",
+        user_token: "api_key123abc",
+        user_login: true
+    };
+
+    try {
+        const response = await fetch(url, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        });
+
+        const responseData = await response.json();
+        console.log(responseData);
+    } catch (error) {
+        console.error("Error:", error);
+    }
+}
+
+post();
+    post();
+    // window.location.href = "http://localhost:5000/api/user/signup";
+</script>
