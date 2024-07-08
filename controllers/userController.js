@@ -1,14 +1,6 @@
-const mongoose = require("../models/Users.js")
+const myUser = require("../models/Users.js");
+
 class User {
-    /*
-    constructor(req, res) {
-        this.req = req;
-        this.res = res;
-        this.username = req.body.username;
-        this.email = req.body.email;
-        this.password = req.body.password;
-    }
-*/
     async register(req, res) {
         const username = req.body.user_name;
         const email = req.body.user_email;
@@ -63,14 +55,14 @@ class User {
             }, 2000);
         });
     }
-    async users(req,res){
+    async users(req, res) {
         try {
-    const users = await User.find().exec();
-    console.log(users)
-    return res.status(200).json(users)
-  } catch (err) {
-    console.log(err)
-  }
+            const users = await myUser.find().exec();
+            console.log(users);
+            return res.status(200).json(users);
+        } catch (err) {
+            console.log(err);
+        }
     }
 }
 
