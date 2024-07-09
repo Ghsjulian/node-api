@@ -1,9 +1,9 @@
 const myUser = require("../models/Users.js");
 const myFunction = require("../auth/functions");
-const dotenv = require('dotenv');
+const dotenv = require("dotenv");
 
-dotenv.config({ path: '../.env' });
-var apiUrl = process.env.API_URL
+dotenv.config({ path: "../.env" });
+var apiUrl = process.env.API_URL;
 class User {
     async register(req, res) {
         const username = req.body.user_name;
@@ -59,7 +59,7 @@ class User {
                     user_name: username,
                     user_email: email,
                     user_password: encPassword,
-                    user_avtar: default_user,
+                    user_avtar: apiUrl + `/files/images/default_user.png`,
                     user_token: await myFunction.encodeJWT({
                         username,
                         email,
@@ -67,7 +67,19 @@ class User {
                     }),
                     user_login: true
                 });
-                res.json(newUser);
+                if (newUser.save()) {
+                    return res.status(201).json({
+                        code: 201,
+                        data : {
+                            
+                            isLogin : true,
+                            token : newUser.user_token,
+                            date : today
+                        },
+                        status: "success",
+                        success: "User Registration Successfully"
+                    });
+                }
             }
         } catch (err) {
             return res

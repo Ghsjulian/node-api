@@ -1,12 +1,15 @@
 const express = require("express");
 const cors = require("cors");
 const app = express();
-const PORT = process.env.PORT || 5000
+const PORT = process.env.PORT || 5000;
 const conn = require("./database/db.js");
 const router = require("./routes/route.js");
 // const users = require("./getUser.js");
 
 console.clear();
+
+// Serve images from the 'images' directory
+app.use("/images", express.static("images"));
 app.use(express.json());
 app.use(cors());
 app.get("/", (req, res) => {
@@ -18,6 +21,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/user", router);
+app.use("/files", router);
 
 /*=================================*/
 app.listen(PORT, () => {
