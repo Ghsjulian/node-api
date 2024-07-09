@@ -98,7 +98,7 @@ class User {
     async users(req, res) {
         try {
             const users = await myUser.find().exec();
-            console.log(users);
+           // console.log(users);
             return res.status(200).json(users);
         } catch (err) {
             console.log(err);
