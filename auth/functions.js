@@ -8,7 +8,7 @@ class myFunction {
         try {
             const user = await myUser.findOne(key);
             if (user) {
-                return true;
+                return user;
             } else {
                 return false;
             }

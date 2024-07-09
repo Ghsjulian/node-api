@@ -86,19 +86,87 @@ class User {
                 .json({ code: 403, error: "Error Registering User" });
         }
     }
-
-    async login() {
-        // TO DO: implement login logic
-        console.log("Login method not implemented yet");
-        return res
-            .status(501)
-            .json({ error: "Login method not implemented yet" });
+    async login(req, res) {
+        const email = req.body.user_email.trim();
+        const password = req.body.user_password.trim();
+        // Validation
+        if (!email || !password) {
+            return res.status(400).json({
+                code: 403,
+                status: "failed",
+                error: "All Fields Are Required"
+            });
+        }
+        if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email)) {
+            return res.status(400).json({
+                code: 403,
+                status: "failed",
+                error: "Invalid Email Address"
+            });
+        }
+        if (password.length < 5) {
+            return res.status(400).json({
+                code: 403,
+                status: "failed",
+                error: "Password Must Be At Least 8 Characters"
+            });
+        }
+        try {
+            const isExist = await myFunction.findOne({
+                user_email: email
+            });
+            if (isExist) {
+                if (isExist.user_email === email) {
+                    if (myFunction.comparePassword(isExist.user_password)) {
+                        const date = new Date();
+                        const today = date.toDateString();
+                        const username = isExist.user_name;
+                        res.status(200).json({
+                            code: 200,
+                            data: {
+                                isLogin: true,
+                                token: await myFunction.encodeJWT({
+                                    username,
+                                    email,
+                                    today
+                                }),
+                                date: today
+                            },
+                            status: "success",
+                            success: "User Login Successfully"
+                        });
+                    } else {
+                        res.status(403).json({
+                            code: 403,
+                            status: "failed",
+                            error: "Invalid Credentials , Please Try Again"
+                        });
+                    }
+                } else {
+                    res.status(403).json({
+                        code: 403,
+                        status: "failed",
+                        error: "Invalid Credentials , Please Try Again"
+                    });
+                }
+            } else {
+                res.status(403).json({
+                    code: 403,
+                    status: "failed",
+                    error: "Invalid Credentials , Please Try Again"
+                });
+            }
+        } catch (err) {
+            return res
+                .status(500)
+                .json({ code: 403, error: "Error User Login" });
+        }
     }
 
     async users(req, res) {
         try {
             const users = await myUser.find().exec();
-           // console.log(users);
+            // console.log(users);
             return res.status(200).json(users);
         } catch (err) {
             console.log(err);

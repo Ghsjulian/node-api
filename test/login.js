@@ -1,9 +1,8 @@
 "use strict";
 
-async function signup() {
-    let url = "http://localhost:5000/api/signup";
+async function login() {
+    let url = "http://localhost:5000/api/login";
     const data = {
-        user_name: "Ghs Julian",
         user_email: "ghsjulian@gmail.com",
         user_password: "123456"
     };
@@ -23,4 +22,4 @@ async function signup() {
         console.error("Error:", error);
     }
 }
-signup();
+login();

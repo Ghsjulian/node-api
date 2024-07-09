@@ -6,7 +6,6 @@ const PORT = process.env.PORT || 5000;
 const conn = require("./database/db.js");
 const router = require("./routes/route.js");
 
-console.clear();
 
 // Serve images from the 'images' directory
 const publicPath = path.join(__dirname, "public");
