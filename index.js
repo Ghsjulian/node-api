@@ -1,3 +1,4 @@
+const path = require("path");
 const express = require("express");
 const cors = require("cors");
 const app = express();
@@ -22,7 +23,7 @@ app.get("/", (req, res) => {
     });
 });
 
-app.use("/api/user", router);
+app.use("/api", router);
 
 /*=================================*/
 app.listen(PORT, () => {
