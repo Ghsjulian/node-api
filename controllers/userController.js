@@ -1,6 +1,9 @@
 const myUser = require("../models/Users.js");
-const { hash, compareHashed } = require("../auth/hashed");
-const { findOne } = require("../auth/functions");
+const myFunction = require("../auth/functions");
+const dotenv = require('dotenv');
+
+dotenv.config({ path: '../.env' });
+var apiUrl = process.env.API_URL
 class User {
     async register(req, res) {
         const username = req.body.user_name;
@@ -10,23 +13,35 @@ class User {
         const token = req.body.user_token;
         // Validation
         if (!username || !email || !password) {
-            return res.status(400).json({ error: "All fields are required" });
+            return res.status(400).json({
+                code: 403,
+                status: "failed",
+                error: "All Fields Are Required"
+            });
         }
         if (username.length < 3) {
-            return res
-                .status(400)
-                .json({ error: "Username must be at least 3 characters" });
+            return res.status(400).json({
+                code: 403,
+                status: "failed",
+                error: "Username Must Be At Least 3 Characters"
+            });
         }
         if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email)) {
-            return res.status(400).json({ error: "Invalid email address" });
+            return res.status(400).json({
+                code: 403,
+                status: "failed",
+                error: "Invalid Email Address"
+            });
         }
         if (password.length < 5) {
-            return res
-                .status(400)
-                .json({ error: "Password must be at least 8 characters" });
+            return res.status(400).json({
+                code: 403,
+                status: "failed",
+                error: "Password Must Be At Least 8 Characters"
+            });
         }
         try {
-            const isExist = await findOne({
+            const isExist = await myFunction.findOne({
                 user_name: username,
                 user_email: email
             });
@@ -34,22 +49,30 @@ class User {
                 res.status(403).json({
                     code: 403,
                     status: "failed",
-                    message: "User Already Exist!"
+                    error: "User Already Exist!"
                 });
             } else {
-                const encPassword = hash(password);
+                const encPassword = await myFunction.hashPassword(password);
+                const date = new Date();
+                const today = date.toDateString();
                 const newUser = new myUser({
                     user_name: username,
                     user_email: email,
                     user_password: encPassword,
-                    user_avtar: avtar,
-                    user_token: token,
+                    user_avtar: default_user,
+                    user_token: await myFunction.encodeJWT({
+                        username,
+                        email,
+                        today
+                    }),
                     user_login: true
                 });
                 res.json(newUser);
             }
         } catch (err) {
-            return res.status(500).json({ error: "Error registering user" });
+            return res
+                .status(500)
+                .json({ code: 403, error: "Error Registering User" });
         }
     }
 

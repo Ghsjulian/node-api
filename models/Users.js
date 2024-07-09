@@ -1,4 +1,4 @@
-const mongoose = require("../db.js");
+const mongoose = require("../database/db.js");
 
 const userSchema = new mongoose.Schema({
   user_name: String,
