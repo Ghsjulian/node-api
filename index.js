@@ -9,7 +9,8 @@ const router = require("./routes/route.js");
 console.clear();
 
 // Serve images from the 'images' directory
-app.use("./images", express.static("images"));
+app.use(express.static("public"));
+app.use("/images/", express.static("images"));
 app.use(express.json());
 app.use(cors());
 app.get("/", (req, res) => {
@@ -21,7 +22,6 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/user", router);
-app.use("/files", router);
 
 /*=================================*/
 app.listen(PORT, () => {

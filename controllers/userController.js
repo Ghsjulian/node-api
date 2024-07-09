@@ -59,7 +59,7 @@ class User {
                     user_name: username,
                     user_email: email,
                     user_password: encPassword,
-                    user_avtar: apiUrl + `/files/images/default_user.png`,
+                    user_avtar: apiUrl + `/images/default_user.png`,
                     user_token: await myFunction.encodeJWT({
                         username,
                         email,
