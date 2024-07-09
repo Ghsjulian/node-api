@@ -9,7 +9,7 @@ const router = require("./routes/route.js");
 console.clear();
 
 // Serve images from the 'images' directory
-app.use("/images", express.static("images"));
+app.use("./images", express.static("images"));
 app.use(express.json());
 app.use(cors());
 app.get("/", (req, res) => {
