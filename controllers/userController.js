@@ -70,11 +70,10 @@ class User {
                 if (newUser.save()) {
                     return res.status(201).json({
                         code: 201,
-                        data : {
-                            
-                            isLogin : true,
-                            token : newUser.user_token,
-                            date : today
+                        data: {
+                            isLogin: true,
+                            token: newUser.user_token,
+                            date: today
                         },
                         status: "success",
                         success: "User Registration Successfully"
@@ -96,16 +95,6 @@ class User {
             .json({ error: "Login method not implemented yet" });
     }
 
-    async saveDoc() {
-        // Simulate saving user document to a database
-        console.log("Saving user document...");
-        return new Promise((resolve, reject) => {
-            setTimeout(() => {
-                console.log("User document saved successfully!");
-                resolve();
-            }, 2000);
-        });
-    }
     async users(req, res) {
         try {
             const users = await myUser.find().exec();
@@ -113,6 +102,11 @@ class User {
             return res.status(200).json(users);
         } catch (err) {
             console.log(err);
+            return res.status(404).json({
+                code: 404,
+                status: "failed",
+                error: "No User Found!"
+            });
         }
     }
 }

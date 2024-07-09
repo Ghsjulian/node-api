@@ -10,10 +10,10 @@ const router = require("./routes/route.js");
 console.clear();
 
 // Serve images from the 'images' directory
-const publicPath = path.join(__dirname, 'public');
+const publicPath = path.join(__dirname, "public");
 app.use(express.static(publicPath));
 app.use(express.json());
-app.use(cors({ origin: '*' }));
+app.use(cors({ origin: "*" }));
 
 app.get("/", (req, res) => {
     res.status(200).send({
