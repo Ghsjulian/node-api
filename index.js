@@ -13,7 +13,8 @@ console.clear();
 const publicPath = path.join(__dirname, 'public');
 app.use(express.static(publicPath));
 app.use(express.json());
-app.use(cors());
+app.use(cors({ origin: '*' }));
+
 app.get("/", (req, res) => {
     res.status(200).send({
         code: 200,
