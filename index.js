@@ -10,7 +10,8 @@ console.clear();
 
 // Serve images from the 'images' directory
 app.use(express.static("public"));
-app.use("/images/", express.static("images"));
+const static_path = path.join(__dirname, "public");
+app.use(express.static(static_path));
 app.use(express.json());
 app.use(cors());
 app.get("/", (req, res) => {
