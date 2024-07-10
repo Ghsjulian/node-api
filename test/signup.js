@@ -21,8 +21,8 @@ async function verifyEmail(verification) {
 async function signup() {
     let url = "http://localhost:5000/api/signup";
     const data = {
-        user_name: "Sunita Sinha",
-        user_email: "ghs.julian@yandex.com",
+        user_name: "Banali Singh",
+        user_email: "bma1i8h3db@hellomailo.net",
         user_password: "123456"
     };
 
@@ -37,7 +37,7 @@ async function signup() {
 
         const responseData = await response.json();
         console.log(responseData);
-        verifyEmail(responseData.user);
+        //verifyEmail(responseData.user);
     } catch (error) {
         console.error("Error:", error);
     }

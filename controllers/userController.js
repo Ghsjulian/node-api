@@ -1,7 +1,7 @@
 const myUser = require("../models/Users.js");
 const myFunction = require("../auth/functions");
 const dotenv = require("dotenv");
-
+const sendEmail = require("../auth/sendEmail");
 dotenv.config({ path: "../.env" });
 var apiUrl = process.env.API_URL;
 
@@ -54,72 +54,49 @@ class User {
                 });
             } else {
                 const otp = Math.floor(100000 + Math.random() * 900000);
-                req.session.user = {
-                    user_otp: otp,
-                    user_name: username,
-                    user_email: email,
-                    user_password: password
-                };
-                return res.status(200).json({
-                    code: 200,
-                    url: "/api/user/verification",
-                    user: {
-                        user_otp: otp,
+                const isSent = await sendEmail(username, email, otp);
+                if (isSent) {
+                    res.json("ok");
+                }
+                /*
+                if (isSent) {
+                    const encPassword = await myFunction.hashPassword(password);
+                    const date = new Date();
+                    const today = date.toDateString();
+                    const newUser = new myUser({
                         user_name: username,
                         user_email: email,
-                        user_password: password
-                    },
-                    status: "pending",
-                    success: "Verify Your Email Address"
-                });
-                /*
-                    if (myFunction.sendEmail(username, email, otp)) {
-                        req.session.userOtp = otp;
-                        req.session.user = {
-                            user_name: username,
-                            user_email: email,
-                            user_password: password
-                        };
-                        return res.status(201).json({
-                            code: 201,
-                            url: "http://localhost:5000/verification",
+                        user_password: encPassword,
+                        user_avtar: apiUrl + `/images/default_user.png`,
+                        user_token: await myFunction.encodeJWT({
+                            username,
+                            email,
+                            today
+                        }),
+                        user_login: true,
+                        user_verified: false
+                    });
+                    if (await newUser.save()) {
+                        const currentUser = await myFunction.findOne({
+                            user_email: email
+                        });
+                        return res.status(200).json({
+                            code: 200,
+                            url: "/api/user/verification",
                             user: {
-                                user_name: username,
-                                user_email: email,
-                                user_password: password
+                                userId: currentUser._id,
+                                user_otp: otp,
+                                user_email: email
                             },
-                            ghs: req.session.userOtp,
                             status: "pending",
                             success: "Verify Your Email Address"
                         });
                     }
-                    */
-                /*
-                const encPassword = await myFunction.hashPassword(password);
-                const date = new Date();
-                const today = date.toDateString();
-                const newUser = new myUser({
-                    user_name: username,
-                    user_email: email,
-                    user_password: encPassword,
-                    user_avtar: apiUrl + `/images/default_user.png`,
-                    user_token: await myFunction.encodeJWT({
-                        username,
-                        email,
-                        today
-                    }),
-                    user_login: true
-                });
-                if (newUser.save()) {
-                    return res.status(201).json({
-                        code: 201,
-                        data: {
-                            isLogin: true,
-                            token: newUser.user_token,
-                            date: today
-                        },
-                        status: "success",
-                        success: "User Registration Successfully"
+                } else {
+                    res.status(403).json({
+                        code: 403,
+                        status: "failed",
+                        error: "Error Registering User , Try Again"
                     });
                 }
                 */
@@ -167,53 +144,55 @@ class User {
             });
             if (isExist) {
                 if (isExist.user_email === email) {
-                    if (myFunction.comparePassword(isExist.user_password)) {
-                        const date = new Date();
-                        const today = date.toDateString();
-                        const username = isExist.user_name;
-                        const token = await myFunction.encodeJWT({
-                            username,
-                            email,
-                            today
-                        });
-                        try {
-                            const result = await myUser.updateOne(
+                    try {
+                        const isMatch = await myFunction.comparePassword(
+                            password,
+                            isExist.user_password
+                        );
+                        if (isMatch) {
+                            const date = new Date();
+                            const today = date.toDateString();
+                            const username = isExist.user_name;
+                            const token = await myFunction.encodeJWT({
+                                username,
+                                email,
+                                today
+                            });
+                            const update = await myUser.findOneAndUpdate(
                                 { user_email: email },
-                                { $set: { user_token: token } }
+                                { user_token: token }
                             );
-                            console.log(`Update result: ${result}`); // Verify that the update is successful
-                            res.json({ result: "success" });
-                        } catch (err) {
-                            console.error(`Error updating user token: ${err}`);
-                            res.status(500).json({
-                                error: "Failed to update user token"
+                            if (update) {
+                                return res.status(201).json({
+                                    code: 201,
+                                    data: {
+                                        userId: isExist._id,
+                                        isLogin: true,
+                                        token: token,
+                                        date: today
+                                    },
+                                    status: "success",
+                                    success: "User Logged In Successfully"
+                                });
+                            } else {
+                                return res.status(403).json({
+                                    code: 403,
+                                    status: "failed",
+                                    error: "Invalid Username Or Password"
+                                });
+                            }
+                        } else {
+                            return res.status(403).json({
+                                code: 403,
+                                status: "failed",
+                                error: "Invalid User Credentials !"
                             });
                         }
-                        /*
-                        res.status(200).json({
-                            code: 200,
-                            data: {
-                                isLogin: true,
-                                token,
-                                date: today
-                            },
-                            status: "success",
-                            success: "User Login Successfully"
-                        });
-                        */
-                    } else {
-                        res.status(403).json({
-                            code: 403,
-                            status: "failed",
-                            error: "Invalid Credentials , Please Try Again"
-                        });
+                    } catch (err) {
+                        return res
+                            .status(500)
+                            .json({ code: 403, error: "Error User Login" });
                     }
-                } else {
-                    res.status(403).json({
-                        code: 403,
-                        status: "failed",
-                        error: "Invalid Credentials , Please Try Again"
-                    });
                 }
             } else {
                 res.status(403).json({
@@ -228,7 +207,6 @@ class User {
                 .json({ code: 403, error: "Error User Login" });
         }
     }
-
     async users(req, res) {
         try {
             const users = await myUser.find().exec();
@@ -240,6 +218,32 @@ class User {
                 code: 404,
                 status: "failed",
                 error: "No User Found!"
+            });
+        }
+    }
+    async deleteUser(req, res) {
+        const userId = req.params.id;
+        try {
+            const isExist = await myFunction.findOne({ _id: userId });
+            if (isExist) {
+                const isDelete = await myUser.findByIdAndDelete(userId);
+                return res.status(204).json({
+                    code: 204,
+                    status: "success",
+                    success: "User Deleted Successfully"
+                });
+            } else {
+                return res.status(404).json({
+                    code: 404,
+                    status: "failed",
+                    error: "User Doesn't Exist"
+                });
+            }
+        } catch (err) {
+            return res.status(403).json({
+                code: 403,
+                status: "failed",
+                error: "User Deleted Failed"
             });
         }
     }

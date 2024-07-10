@@ -12,6 +12,7 @@ const router = require("./routes/route.js");
 const publicPath = path.join(__dirname, "public");
 app.use(express.static(publicPath));
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(cors({ origin: "*" }));
 
 // Set up session middleware

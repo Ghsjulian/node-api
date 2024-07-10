@@ -49,7 +49,7 @@ class myFunction {
         }
         return params;
     }
-    async sendEmail(userName, userEmail,otp) {
+    async sendEmail(userName, userEmail, otp) {
         const nodemailer = require("nodemailer");
         let transporter = nodemailer.createTransport({
             host: "smtp.gmail.com",
@@ -66,7 +66,7 @@ class myFunction {
             from: email_address,
             to: userEmail,
             subject: "Please Verify Your Email Address",
-            text: "OTP Verification Code",
+            /*text: "OTP Verification Code",*/
             html: `<p>Hello, <b style="color:red">${userName}</b> Congratulations!</p><br/>
             <p>Please Verify Your Email , The Verification Link Will Be Expired In 5 Minutes.<br/>
             To Verify The Email Address And Complete Your Registration.</p><br><br>
@@ -75,8 +75,9 @@ class myFunction {
         transporter.sendMail(mailOptions, (error, info) => {
             if (error) {
                 return false;
+            } else {
+                return true;
             }
-            return true;
         });
     }
 }
