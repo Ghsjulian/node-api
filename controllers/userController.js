@@ -4,6 +4,7 @@ const dotenv = require("dotenv");
 
 dotenv.config({ path: "../.env" });
 var apiUrl = process.env.API_URL;
+
 class User {
     async register(req, res) {
         const username = req.body.user_name;
@@ -49,9 +50,51 @@ class User {
                 res.status(403).json({
                     code: 403,
                     status: "failed",
-                    error: "User Already Exist!"
+                    error: "User Already Registered!"
                 });
             } else {
+                const otp = Math.floor(100000 + Math.random() * 900000);
+                req.session.user = {
+                    user_otp: otp,
+                    user_name: username,
+                    user_email: email,
+                    user_password: password
+                };
+                return res.status(200).json({
+                    code: 200,
+                    url: "/api/user/verification",
+                    user: {
+                        user_otp: otp,
+                        user_name: username,
+                        user_email: email,
+                        user_password: password
+                    },
+                    status: "pending",
+                    success: "Verify Your Email Address"
+                });
+                /*
+                    if (myFunction.sendEmail(username, email, otp)) {
+                        req.session.userOtp = otp;
+                        req.session.user = {
+                            user_name: username,
+                            user_email: email,
+                            user_password: password
+                        };
+                        return res.status(201).json({
+                            code: 201,
+                            url: "http://localhost:5000/verification",
+                            user: {
+                                user_name: username,
+                                user_email: email,
+                                user_password: password
+                            },
+                            ghs: req.session.userOtp,
+                            status: "pending",
+                            success: "Verify Your Email Address"
+                        });
+                    }
+                    */
+                /*
                 const encPassword = await myFunction.hashPassword(password);
                 const date = new Date();
                 const today = date.toDateString();
@@ -79,12 +122,19 @@ class User {
                         success: "User Registration Successfully"
                     });
                 }
+                */
             }
         } catch (err) {
             return res
                 .status(500)
                 .json({ code: 403, error: "Error Registering User" });
         }
+    }
+    async verifyEmail(req, res) {
+        const userInfo = req.body.user;
+        const sessionInfo = req.session;
+        console.log(sessionInfo);
+        res.json(userInfo);
     }
     async login(req, res) {
         const email = req.body.user_email.trim();
@@ -121,20 +171,36 @@ class User {
                         const date = new Date();
                         const today = date.toDateString();
                         const username = isExist.user_name;
+                        const token = await myFunction.encodeJWT({
+                            username,
+                            email,
+                            today
+                        });
+                        try {
+                            const result = await myUser.updateOne(
+                                { user_email: email },
+                                { $set: { user_token: token } }
+                            );
+                            console.log(`Update result: ${result}`); // Verify that the update is successful
+                            res.json({ result: "success" });
+                        } catch (err) {
+                            console.error(`Error updating user token: ${err}`);
+                            res.status(500).json({
+                                error: "Failed to update user token"
+                            });
+                        }
+                        /*
                         res.status(200).json({
                             code: 200,
                             data: {
                                 isLogin: true,
-                                token: await myFunction.encodeJWT({
-                                    username,
-                                    email,
-                                    today
-                                }),
+                                token,
                                 date: today
                             },
                             status: "success",
                             success: "User Login Successfully"
                         });
+                        */
                     } else {
                         res.status(403).json({
                             code: 403,

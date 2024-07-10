@@ -13,21 +13,17 @@ const publicPath = path.join(__dirname, "public");
 app.use(express.static(publicPath));
 app.use(express.json());
 app.use(cors({ origin: "*" }));
-
-// Set up session middleware
 app.use(
     session({
         secret: process.env.SECRET_KEY,
         resave: false,
-        saveUninitialized: true,
+  saveUninitialized: true,
         cookie: {
             secure: false,
             maxAge: 10 * 60 * 1000 // 10 minutes
         }
     })
 );
-
-// Set up router middleware
 app.use("/api", router);
 
 /*=================================*/
