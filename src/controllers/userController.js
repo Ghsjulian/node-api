@@ -3,7 +3,7 @@ const myFunction = require("../auth/functions");
 const dotenv = require("dotenv");
 dotenv.config({ path: "../.env" });
 var apiUrl = process.env.API_URL;
-const sendEmail = require("../email");
+const sendEmail = require("../../email");
 
 class User {
     async register(req, res) {
@@ -42,7 +42,7 @@ class User {
             });
         }
         try {
-            const isExist = await myFunction.findOne({
+            const isExist = await myUser.findOne({
                 user_name: username,
                 user_email: email
             });
@@ -55,10 +55,65 @@ class User {
             } else {
                 const otp = Math.floor(100000 + Math.random() * 900000);
                 const isSent = await sendEmail(username, email, otp);
-                
-                    res.json("ok");
-                
-                /*
+                if (isSent) {
+                    const encPassword = await myFunction.hashPassword(password);
+                    const date = new Date();
+                    const today = date.toDateString();
+                    const newUser = new myUser({
+                        user_name: username,
+                        user_email: email,
+                        user_password: encPassword,
+                        user_avtar: apiUrl + `/images/default_user.png`,
+                        user_token: await myFunction.encodeJWT({
+                            username,
+                            email,
+                            today
+                        }),
+                        user_login: true,
+                        user_verified: false
+                    });
+                    const save = await newUser.save();
+                        if (save) {
+                        const currentUser = await myUser.findOne({
+                            user_email: email
+                        });
+                        return res.status(200).json({
+                            code: 200,
+                            url: "/api/user/verification",
+                            user: {
+                                userId: currentUser._id,
+                                user_otp: otp,
+                                user_email: email
+                            },
+                            status: "pending",
+                            success: "Verify Your Email Address"
+                        });
+                        }
+                } else {
+                    res.status(403).json({
+                        code: 403,
+                        status: "failed",
+                        error: "Error Registering User , Try Again"
+                    });
+                }
+            }
+        } catch (err) {
+            console.log(err);
+            return res
+                .status(500)
+                .json({ code: 403, error: "Error Registering User" });
+        }
+
+        /*
+            if (isExist) {
+                res.status(403).json({
+                    code: 403,
+                    status: "failed",
+                    error: "User Already Registered!"
+                });
+            } else {
+                const otp = Math.floor(100000 + Math.random() * 900000);
+                const isSent = await sendEmail(username, email, otp);
                 if (isSent) {
                     const encPassword = await myFunction.hashPassword(password);
                     const date = new Date();
@@ -99,13 +154,8 @@ class User {
                         error: "Error Registering User , Try Again"
                     });
                 }
-                */
             }
-        } catch (err) {
-            return res
-                .status(500)
-                .json({ code: 403, error: "Error Registering User" });
-        }
+            */
     }
     async verifyEmail(req, res) {
         const userInfo = req.body.user;
