@@ -109,8 +109,7 @@ class User {
     }
     async verifyEmail(req, res) {
         const userInfo = req.body.user;
-        const sessionInfo = req.session;
-        console.log(sessionInfo);
+        console.log(userInfo);
         res.json(userInfo);
     }
     async login(req, res) {

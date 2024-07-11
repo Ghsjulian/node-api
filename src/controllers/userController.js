@@ -64,6 +64,7 @@ class User {
                         user_email: email,
                         user_password: encPassword,
                         user_avtar: apiUrl + `/images/default_user.png`,
+                        user_otp: otp,
                         user_token: await myFunction.encodeJWT({
                             username,
                             email,
@@ -73,66 +74,8 @@ class User {
                         user_verified: false
                     });
                     const save = await newUser.save();
-                        if (save) {
+                    if (save) {
                         const currentUser = await myUser.findOne({
-                            user_email: email
-                        });
-                        return res.status(200).json({
-                            code: 200,
-                            url: "/api/user/verification",
-                            user: {
-                                userId: currentUser._id,
-                                user_otp: otp,
-                                user_email: email
-                            },
-                            status: "pending",
-                            success: "Verify Your Email Address"
-                        });
-                        }
-                } else {
-                    res.status(403).json({
-                        code: 403,
-                        status: "failed",
-                        error: "Error Registering User , Try Again"
-                    });
-                }
-            }
-        } catch (err) {
-            console.log(err);
-            return res
-                .status(500)
-                .json({ code: 403, error: "Error Registering User" });
-        }
-
-        /*
-            if (isExist) {
-                res.status(403).json({
-                    code: 403,
-                    status: "failed",
-                    error: "User Already Registered!"
-                });
-            } else {
-                const otp = Math.floor(100000 + Math.random() * 900000);
-                const isSent = await sendEmail(username, email, otp);
-                if (isSent) {
-                    const encPassword = await myFunction.hashPassword(password);
-                    const date = new Date();
-                    const today = date.toDateString();
-                    const newUser = new myUser({
-                        user_name: username,
-                        user_email: email,
-                        user_password: encPassword,
-                        user_avtar: apiUrl + `/images/default_user.png`,
-                        user_token: await myFunction.encodeJWT({
-                            username,
-                            email,
-                            today
-                        }),
-                        user_login: true,
-                        user_verified: false
-                    });
-                    if (await newUser.save()) {
-                        const currentUser = await myFunction.findOne({
                             user_email: email
                         });
                         return res.status(200).json({
@@ -155,13 +98,89 @@ class User {
                     });
                 }
             }
-            */
+        } catch (err) {
+            console.log(err);
+            return res
+                .status(500)
+                .json({ code: 403, error: "Error Registering User" });
+        }
     }
     async verifyEmail(req, res) {
-        const userInfo = req.body.user;
-        const sessionInfo = req.session;
-        console.log(sessionInfo);
-        res.json(userInfo);
+        const userId = req.body.user_id;
+        const user_email = req.body.user_email;
+        const user_otp = req.body.user_otp;
+        // Validation
+        if (!userId || !user_email || !user_otp) {
+            return res.status(400).json({
+                code: 403,
+                status: "failed",
+                error: "All Fields Are Required"
+            });
+        }
+        if (user_otp.length < 5) {
+            return res.status(400).json({
+                code: 403,
+                status: "failed",
+                error: "Invalid Length Of OTP"
+            });
+        }
+        if (
+            !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(user_email)
+        ) {
+            return res.status(400).json({
+                code: 403,
+                status: "failed",
+                error: "Invalid Email Address"
+            });
+        }
+        const isExist = await myUser.findOne({
+            _id: userId,
+            user_email: user_email
+        });
+        if (isExist) {
+            if (
+                isExist.user_otp === user_otp &&
+                isExist.user_email === user_email
+            ) {
+                const date = new Date();
+                const today = date.toDateString();
+                const username = isExist.user_name;
+                const token = await myFunction.encodeJWT({
+                    username,
+                    user_email,
+                    today
+                });
+                const update = await myUser.findOneAndUpdate(
+                    { user_email: user_email },
+                    { user_token: token, user_verified: true }
+                );
+                if (update) {
+                    return res.status(201).json({
+                        code: 201,
+                        data: {
+                            userId: isExist._id,
+                            isLogin: true,
+                            token: token,
+                            date: today
+                        },
+                        status: "success",
+                        success: "User Verification Successfully"
+                    });
+                } else {
+                    return res.status(403).json({
+                        code: 403,
+                        status: "failed",
+                        error: "Invalid OTP"
+                    });
+                }
+            }
+        } else {
+            res.status(403).json({
+                code: 403,
+                status: "failed",
+                error: "User Not Registered Yet"
+            });
+        }
     }
     async login(req, res) {
         const email = req.body.user_email.trim();
