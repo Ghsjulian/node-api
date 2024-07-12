@@ -1,9 +1,9 @@
 const myUser = require("../models/Users.js");
 const myFunction = require("../auth/functions");
 const dotenv = require("dotenv");
-dotenv.config({ path: "../.env" });
+dotenv.config({ path: "../../.env" });
 var apiUrl = process.env.API_URL;
-const sendEmail = require("../../email");
+const sendEmail = require("../auth/sendEmail");
 
 class User {
     async register(req, res) {
@@ -55,6 +55,12 @@ class User {
             } else {
                 const otp = Math.floor(100000 + Math.random() * 900000);
                 const isSent = await sendEmail(username, email, otp);
+                /* 
+                If any error occurs, it seems failed to send email.
+                In that case you need to hard coding add your email address and app password 
+                for sending email , sometimes it showing error from email server .
+                open '/auth/sendEmail.js' and add info.
+                */
                 if (isSent) {
                     const encPassword = await myFunction.hashPassword(password);
                     const date = new Date();

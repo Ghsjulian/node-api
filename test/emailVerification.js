@@ -7,9 +7,9 @@ async function login() {
         user_email: "ghsjulian@gmail.com",
         user_password: "123456" 
         */
-        user_id : "668ff7a73e5734521c1fbfef",
+        user_id : "66908f1041995ef7ca5951b6",
         user_email: "bma1i8h3db@hellomailo.net",
-        user_otp: "758973"
+        user_otp: "671146"
     };
 
     try {
