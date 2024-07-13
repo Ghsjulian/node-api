@@ -168,10 +168,10 @@ class User {
                     user_email,
                     today
                 });
-                    const update = await myUser.findOneAndUpdate(
-                        { user_email: user_email },
-                        { user_token: token, user_verified: true }
-                    );
+                const update = await myUser.findOneAndUpdate(
+                    { user_email: user_email },
+                    { user_token: token, user_verified: true }
+                );
                 if (update) {
                     return res.status(201).json({
                         code: 201,
@@ -181,14 +181,14 @@ class User {
                             token: token,
                             date: today
                         },
-                        type:true,
+                        type: true,
                         status: "success",
                         success: "User Verification Successfully"
                     });
                 } else {
                     return res.status(403).json({
                         code: 403,
-                        type:false,
+                        type: false,
                         status: "failed",
                         error: "Invalid OTP"
                     });
@@ -258,10 +258,10 @@ class User {
                             if (update) {
                                 return res.status(201).json({
                                     code: 201,
+                                    type: true,
                                     data: {
                                         userId: isExist._id,
                                         isLogin: true,
-                                        type: true,
                                         token: token,
                                         date: today
                                     },
@@ -304,6 +304,78 @@ class User {
             return res
                 .status(500)
                 .json({ code: 403, type: false, error: "Error User Login" });
+        }
+    }
+    async logout(req, res) {
+        const token = req.body.token.trim();
+        const userId = req.body.userId.trim();
+        // Validation
+        if (!token || !userId) {
+            return res.status(400).json({
+                code: 403,
+                type: false,
+                status: "failed",
+                error: "All Fields Are Required"
+            });
+        }
+        try {
+            const isExist = await myFunction.findOne({
+                user_token: token,
+                _id: userId
+            });
+            if (isExist) {
+                if (isExist.user_token === token && isExist._id == userId) {
+                    const date = new Date();
+                    const today = date.toDateString();
+                    const username = isExist.user_name;
+                    const email = isExist.user_email;
+                    const token = await myFunction.encodeJWT({
+                        username,
+                        email,
+                        today
+                    });
+                    const update = await myUser.findOneAndUpdate(
+                        { user_email: email },
+                        { user_token: "" }
+                    );
+                    if (update) {
+                        return res.status(201).json({
+                            code: 201,
+                            type: true,
+                            status: "success",
+                            success: "User Logged Out Successfully"
+                        });
+                    } else {
+                        return res.status(403).json({
+                            code: 403,
+                            type: false,
+                            status: "failed",
+                            error: "Invalid Logout"
+                        });
+                    }
+                } else {
+                    res.status(403).json({
+                        code: 403,
+                        type: false,
+                        status: "failed",
+                        error: "Invalid Logout !"
+                    });
+                }
+            } else {
+                res.status(403).json({
+                    code: 403,
+                    type: false,
+                    status: "failed",
+                    error: "ghs Invalid Logout !"
+                });
+            }
+        } catch (err) {
+            res.status(403).json({
+                code: 403,
+                type: false,
+                status: "failed",
+                error: "Invalid Logout !"
+            });
         }
     }
     async users(req, res) {

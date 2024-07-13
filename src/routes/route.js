@@ -6,6 +6,7 @@ const router = express.Router();
 
 router.post("/signup", user.register);
 router.post("/login", user.login);
+router.post("/logout", user.logout);
 router.post("/user/verification", user.verifyEmail);
 router.get("/users", user.users);
 router.get("/users/delete/:id", user.deleteUser);
