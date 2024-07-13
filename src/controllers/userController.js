@@ -16,6 +16,7 @@ class User {
         if (!username || !email || !password) {
             return res.status(400).json({
                 code: 403,
+                type: false,
                 status: "failed",
                 error: "All Fields Are Required"
             });
@@ -24,6 +25,7 @@ class User {
             return res.status(400).json({
                 code: 403,
                 status: "failed",
+                type: false,
                 error: "Username Must Be At Least 3 Characters"
             });
         }
@@ -31,6 +33,7 @@ class User {
             return res.status(400).json({
                 code: 403,
                 status: "failed",
+                type: false,
                 error: "Invalid Email Address"
             });
         }
@@ -38,6 +41,7 @@ class User {
             return res.status(400).json({
                 code: 403,
                 status: "failed",
+                type: false,
                 error: "Password Must Be At Least 8 Characters"
             });
         }
@@ -49,6 +53,7 @@ class User {
             if (isExist) {
                 res.status(403).json({
                     code: 403,
+                    type: false,
                     status: "failed",
                     error: "User Already Registered!"
                 });
@@ -84,14 +89,15 @@ class User {
                         const currentUser = await myUser.findOne({
                             user_email: email
                         });
-                        return res.status(200).json({
-                            code: 200,
+                        return res.status(201).json({
+                            code: 201,
                             url: "/api/user/verification",
                             user: {
                                 userId: currentUser._id,
                                 user_otp: otp,
                                 user_email: email
                             },
+                            type: true,
                             status: "pending",
                             success: "Verify Your Email Address"
                         });
@@ -99,6 +105,7 @@ class User {
                 } else {
                     res.status(403).json({
                         code: 403,
+                        type: false,
                         status: "failed",
                         error: "Error Registering User , Try Again"
                     });
@@ -106,19 +113,22 @@ class User {
             }
         } catch (err) {
             console.log(err);
-            return res
-                .status(500)
-                .json({ code: 403, error: "Error Registering User" });
+            return res.status(500).json({
+                code: 403,
+                type: false,
+                error: "Error Registering User"
+            });
         }
     }
     async verifyEmail(req, res) {
-        const userId = req.body.user_id;
+        const userId = req.body.userId;
         const user_email = req.body.user_email;
         const user_otp = req.body.user_otp;
         // Validation
         if (!userId || !user_email || !user_otp) {
             return res.status(400).json({
                 code: 403,
+                type: false,
                 status: "failed",
                 error: "All Fields Are Required"
             });
@@ -126,6 +136,7 @@ class User {
         if (user_otp.length < 5) {
             return res.status(400).json({
                 code: 403,
+                type: false,
                 status: "failed",
                 error: "Invalid Length Of OTP"
             });
@@ -135,6 +146,7 @@ class User {
         ) {
             return res.status(400).json({
                 code: 403,
+                type: false,
                 status: "failed",
                 error: "Invalid Email Address"
             });
@@ -145,8 +157,8 @@ class User {
         });
         if (isExist) {
             if (
-                isExist.user_otp === user_otp &&
-                isExist.user_email === user_email
+                isExist.user_email === user_email &&
+                isExist.user_otp.toString() === user_otp.toString()
             ) {
                 const date = new Date();
                 const today = date.toDateString();
@@ -156,10 +168,10 @@ class User {
                     user_email,
                     today
                 });
-                const update = await myUser.findOneAndUpdate(
-                    { user_email: user_email },
-                    { user_token: token, user_verified: true }
-                );
+                    const update = await myUser.findOneAndUpdate(
+                        { user_email: user_email },
+                        { user_token: token, user_verified: true }
+                    );
                 if (update) {
                     return res.status(201).json({
                         code: 201,
@@ -169,12 +181,14 @@ class User {
                             token: token,
                             date: today
                         },
+                        type:true,
                         status: "success",
                         success: "User Verification Successfully"
                     });
                 } else {
                     return res.status(403).json({
                         code: 403,
+                        type:false,
                         status: "failed",
                         error: "Invalid OTP"
                     });
@@ -183,6 +197,7 @@ class User {
         } else {
             res.status(403).json({
                 code: 403,
+                type: false,
                 status: "failed",
                 error: "User Not Registered Yet"
             });
@@ -195,6 +210,7 @@ class User {
         if (!email || !password) {
             return res.status(400).json({
                 code: 403,
+                type: false,
                 status: "failed",
                 error: "All Fields Are Required"
             });
@@ -202,6 +218,7 @@ class User {
         if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email)) {
             return res.status(400).json({
                 code: 403,
+                type: false,
                 status: "failed",
                 error: "Invalid Email Address"
             });
@@ -209,6 +226,7 @@ class User {
         if (password.length < 5) {
             return res.status(400).json({
                 code: 403,
+                type: false,
                 status: "failed",
                 error: "Password Must Be At Least 8 Characters"
             });
@@ -243,6 +261,7 @@ class User {
                                     data: {
                                         userId: isExist._id,
                                         isLogin: true,
+                                        type: true,
                                         token: token,
                                         date: today
                                     },
@@ -252,6 +271,7 @@ class User {
                             } else {
                                 return res.status(403).json({
                                     code: 403,
+                                    type: false,
                                     status: "failed",
                                     error: "Invalid Username Or Password"
                                 });
@@ -259,19 +279,23 @@ class User {
                         } else {
                             return res.status(403).json({
                                 code: 403,
+                                type: false,
                                 status: "failed",
                                 error: "Invalid User Credentials !"
                             });
                         }
                     } catch (err) {
-                        return res
-                            .status(500)
-                            .json({ code: 403, error: "Error User Login" });
+                        return res.status(500).json({
+                            code: 403,
+                            type: false,
+                            error: "Error User Login"
+                        });
                     }
                 }
             } else {
                 res.status(403).json({
                     code: 403,
+                    type: false,
                     status: "failed",
                     error: "Invalid Credentials , Please Try Again"
                 });
@@ -279,7 +303,7 @@ class User {
         } catch (err) {
             return res
                 .status(500)
-                .json({ code: 403, error: "Error User Login" });
+                .json({ code: 403, type: false, error: "Error User Login" });
         }
     }
     async users(req, res) {
