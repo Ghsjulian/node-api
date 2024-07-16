@@ -10,6 +10,7 @@ const upload = multer({ dest: './uploads/' });
 class Products {
     async addProduct(req, res) {
         console.log(req.body);
+        console.log(req.file);
         res.json({ok:"okkk"})
         /*
         const product_title = req.body.product_title;
