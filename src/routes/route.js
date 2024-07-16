@@ -3,9 +3,12 @@ const user = require("../controllers/userController");
 const product = require("../controllers/productController");
 const myFunction = require("../auth/functions");
 const isAuth = require("../auth/isAuth");
-const upload = require("../auth/multerConfig")
+const createUpload = require("../auth/multerConfig");
 const router = express.Router();
 
+/* Define The File Uploading */
+const fileName = Math.floor(100000 + Math.random() * 900000).toString();
+const upload = createUpload("./public/uploads/", "products_"+fileName);
 /* Users And Clients Access Routes */
 router.post("/signup", user.register);
 router.post("/login", user.login);
@@ -14,6 +17,10 @@ router.post("/user/verification", user.verifyEmail);
 router.get("/users", user.users);
 router.get("/users/delete/:id", user.deleteUser);
 /* Admin Access Routes */
-router.post("/admin/add-product",upload.single("product_img") ,product.addProduct);
+router.post(
+    "/admin/add-product",
+    upload.single("product_img"),
+    product.addProduct
+);
 
 module.exports = router;

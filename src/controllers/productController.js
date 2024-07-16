@@ -1,17 +1,16 @@
 const Product = require("../models/Products.js");
-const multer = require('multer');
+const multer = require("multer");
 const myFunction = require("../auth/functions");
 const dotenv = require("dotenv");
 dotenv.config({ path: "../../.env" });
 var apiUrl = process.env.API_URL;
-const upload = multer({ dest: './uploads/' });
-
+const upload = multer({ dest: "./uploads/" });
 
 class Products {
     async addProduct(req, res) {
-        console.log(req.body);
-        console.log(req.file);
-        res.json({ok:"okkk"})
+        const data = JSON.parse(req.body.data);
+        const productImg = req.file.filename
+        res.json({ ok: "okkk" });
         /*
         const product_title = req.body.product_title;
         const product_img = req.body.product_img;

@@ -9,37 +9,8 @@
         <div id="root"></div>
         <input onchange="AddProduct()" type="file" name="file" />
         <script>
-async function AddProduct() {
-    const fileInput = document.querySelector('input[type="file"]');
-    const file = fileInput.files[0];
-    const formData = new FormData();
-    formData.append("file", file);
-    let url = "http://localhost:5000/api/admin/add-product";
-    const data = {
-        product_title: "Full Sleeve T-shirt",
-        product_img: "t-shirt_1.png",
-        product_desc: {
-            color: "Light Blue",
-            size: "37 X 56",
-            width: "230 Inch"
-        },
-        product_price: "140 TK BDT"
-    };
-    formData.append("data", JSON.stringify(data));
-    try {
-        const response = await fetch(url, {
-            method: "POST",
-            body: formData
-        });
-
-        const responseData = await response.json();
-        console.log(responseData);
-    } catch (error) {
-        console.error("Error:", error);
-    }
-}
-
-
+            const name = Math.floor(100000 + Math.random() * 900000);
+            console.log(typeof name.toString());
 
             // window.location.href = "http://localhost:5000/";
         </script>
