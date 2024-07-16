@@ -4,7 +4,6 @@ const productSchema = new mongoose.Schema({
     product_title: String,
     product_img: String,
     product_desc: Object,
-    product_price: String,
     product_category : String,
     updated_date: { type: Date, default: Date.now },
     author: { type: String, default: "Ghs Julian" }
