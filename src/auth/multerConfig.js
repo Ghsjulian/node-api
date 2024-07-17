@@ -3,13 +3,14 @@
 const multer = require("multer");
 const path = require("path");
 
-const createUpload = (folderPath, fileName) => {
+const createUpload = (folderPath) => {
+    const fileName = Math.floor(100000 + Math.random() * 900000).toString();
     const storage = multer.diskStorage({
         destination: (req, file, cb) => {
             cb(null, folderPath);
         },
         filename: (req, file, cb) => {
-            cb(null, fileName+path.extname(file.originalname));
+            cb(null,  "products_"+Math.floor(100000 + Math.random() * 900000).toString()+path.extname(file.originalname));
         }
     });
 

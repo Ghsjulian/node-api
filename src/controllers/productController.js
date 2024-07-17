@@ -12,7 +12,6 @@ class Products {
         const product_obj = data.product_obj;
         const category = data.product_category;
         const title = data.product_title;
-
         // Validation
         if (!data || !productImg) {
             return res.status(400).json({
@@ -23,7 +22,6 @@ class Products {
             });
         }
         if (data && productImg) {
-            console.log(product_obj);
             const newProduct = new Product({
                 product_title: title,
                 product_img: apiUrl + "/uploads/" + productImg,
@@ -58,8 +56,30 @@ class Products {
             success: "Everything Is okay"
         });
     }
+    async categoryProduct(req, res) {
+        const products = await Product.find({
+            product_category: req.params.category
+        });
+        res.status(200).json({
+            code: 200,
+            products,
+            type: true,
+            status: "success",
+            success: "Everything Is okay"
+        });
+    }
     async editProduct(req, res) {
-        const products = await Product.findOne({ _id: req.params.id});
+        const products = await Product.findOne({ _id: req.params.id });
+        res.status(200).json({
+            code: 200,
+            products,
+            type: true,
+            status: "success",
+            success: "Everything Is okay"
+        });
+    }
+    async deleteProduct(req, res) {
+        const products = await Product.deleteOne({ _id: req.params.id });
         res.status(200).json({
             code: 200,
             products,
