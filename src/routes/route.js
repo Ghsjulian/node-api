@@ -8,7 +8,7 @@ const router = express.Router();
 
 /* Define The File Uploading */
 const fileName = Math.floor(100000 + Math.random() * 900000).toString();
-const upload = createUpload("./public/uploads/", "products_"+fileName);
+const upload = createUpload("./public/uploads/", "products_" + fileName);
 /* Users And Clients Access Routes */
 router.post("/signup", user.register);
 router.post("/login", user.login);
@@ -22,5 +22,7 @@ router.post(
     upload.single("product_img"),
     product.addProduct
 );
+router.get("/admin/fetch-products", product.fetchProduct);
+router.get("/admin/edit-product/:id", product.editProduct);
 
 module.exports = router;
