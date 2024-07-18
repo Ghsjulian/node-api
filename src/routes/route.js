@@ -28,5 +28,7 @@ router.get("/admin/delete-product/:id", product.deleteProduct);
 
 /* Products Routes */
 router.get("/products/category-product/:category", product.categoryProduct);
+router.get("/products/all-products", product.allProduct);
+router.get("/products/view-products/:id", product.viewProduct);
 
 module.exports = router;

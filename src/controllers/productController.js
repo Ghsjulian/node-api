@@ -60,7 +60,7 @@ class Products {
             product_desc,
             product_category,
             product_title,
-            product_img: isImage ? productImg : oldImg
+            product_img: isImage ? apiUrl + "/uploads/" +productImg : oldImg
         };
         try{
         const update = await Product.findByIdAndUpdate(req.params.id, obj);
@@ -102,6 +102,28 @@ class Products {
         const products = await Product.find({
             product_category: req.params.category
         });
+        res.status(200).json({
+            code: 200,
+            products,
+            type: true,
+            status: "success",
+            success: "Everything Is okay"
+        });
+    }
+    async viewProduct(req, res) {
+        const products = await Product.find({
+            _id: req.params.id
+        });
+        res.status(200).json({
+            code: 200,
+            products,
+            type: true,
+            status: "success",
+            success: "Everything Is okay"
+        });
+    }
+    async allProduct(req, res) {
+        const products = await Product.find().exec()
         res.status(200).json({
             code: 200,
             products,
