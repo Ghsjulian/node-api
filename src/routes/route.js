@@ -21,11 +21,12 @@ router.post(
     upload.single("product_img"),
     product.addProduct
 );
+router.put("/admin/update-product/:id",upload.single("product_img"), product.updateProduct);
 router.get("/admin/fetch-products", product.fetchProduct);
 router.get("/admin/edit-product/:id", product.editProduct);
 router.get("/admin/delete-product/:id", product.deleteProduct);
 
-/* Products Routes */ 
+/* Products Routes */
 router.get("/products/category-product/:category", product.categoryProduct);
 
 module.exports = router;

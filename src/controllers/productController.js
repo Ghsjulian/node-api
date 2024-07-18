@@ -46,6 +46,48 @@ class Products {
             }
         }
     }
+    async updateProduct(req, res) {
+        const isImage = req.body.isImage === "YES" ? true : false;
+        var productImg = "";
+        const oldImg = req.body.img;
+        const product_desc = JSON.parse(req.body.product_desc);
+        const product_category = req.body.product_category;
+        const product_title = req.body.product_title;
+        if (isImage) {
+            productImg = req.file.filename;
+        }
+        const obj = {
+            product_desc,
+            product_category,
+            product_title,
+            product_img: isImage ? productImg : oldImg
+        };
+        try{
+        const update = await Product.findByIdAndUpdate(req.params.id, obj);
+        if (update) {
+            res.status(200).json({
+                code: 200,
+                type: true,
+                status: "success",
+                success: "Product Updated Successfully"
+            });
+        } else {
+            res.status(500).json({
+                code: 500,
+                type: false,
+                status: "error",
+                error: "Product Updated Failed"
+            });
+        }
+        }catch(error){
+            res.status(500).json({
+                code: 500,
+                type: false,
+                status: "error",
+                error: error
+            });
+        }
+    }
     async fetchProduct(req, res) {
         const products = await Product.find().exec();
         res.status(200).json({
