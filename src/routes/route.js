@@ -30,5 +30,6 @@ router.get("/admin/delete-product/:id", product.deleteProduct);
 router.get("/products/category-product/:category", product.categoryProduct);
 router.get("/products/all-products", product.allProduct);
 router.get("/products/view-products/:id", product.viewProduct);
+router.post("/products/add-cart", product.addCart);
 
 module.exports = router;

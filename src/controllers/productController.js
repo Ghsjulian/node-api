@@ -1,4 +1,6 @@
-const Product = require("../models/Products.js");
+const Product = require("../models/Products");
+const User = require("../models/Users");
+const Cart = require("../models/Cart");
 const multer = require("multer");
 const myFunction = require("../auth/functions");
 const dotenv = require("dotenv");
@@ -60,26 +62,26 @@ class Products {
             product_desc,
             product_category,
             product_title,
-            product_img: isImage ? apiUrl + "/uploads/" +productImg : oldImg
+            product_img: isImage ? apiUrl + "/uploads/" + productImg : oldImg
         };
-        try{
-        const update = await Product.findByIdAndUpdate(req.params.id, obj);
-        if (update) {
-            res.status(200).json({
-                code: 200,
-                type: true,
-                status: "success",
-                success: "Product Updated Successfully"
-            });
-        } else {
-            res.status(500).json({
-                code: 500,
-                type: false,
-                status: "error",
-                error: "Product Updated Failed"
-            });
-        }
-        }catch(error){
+        try {
+            const update = await Product.findByIdAndUpdate(req.params.id, obj);
+            if (update) {
+                res.status(200).json({
+                    code: 200,
+                    type: true,
+                    status: "success",
+                    success: "Product Updated Successfully"
+                });
+            } else {
+                res.status(500).json({
+                    code: 500,
+                    type: false,
+                    status: "error",
+                    error: "Product Updated Failed"
+                });
+            }
+        } catch (error) {
             res.status(500).json({
                 code: 500,
                 type: false,
@@ -111,7 +113,7 @@ class Products {
         });
     }
     async viewProduct(req, res) {
-        const products = await Product.find({
+        const products = await Product.findOne({
             _id: req.params.id
         });
         res.status(200).json({
@@ -123,7 +125,7 @@ class Products {
         });
     }
     async allProduct(req, res) {
-        const products = await Product.find().exec()
+        const products = await Product.find().exec();
         res.status(200).json({
             code: 200,
             products,
@@ -151,6 +153,38 @@ class Products {
             status: "success",
             success: "Everything Is okay"
         });
+    }
+    async addCart(req, res) {
+        const token = req.body.user.token;
+        const userId = req.body.user.userId;
+        const product_id = req.body.product_id;
+        const product_title = req.body.product_title;
+        const product_img = req.body.product_img;
+        const price = req.body.price;
+        const quantity = req.body.quantity;
+        try {
+            const isToken = await User.findOne({ user_token: token });
+            if (isToken) {
+                res.json({ ok: "ok" });
+                // const newCart = await new Cart({});
+            } else {
+                res.status(403).json({
+                    code: 403,
+                    type: false,
+                    status: "error",
+                    error: "Invalid User Token"
+                });
+            }
+        } catch (error) {
+            res.status(403).json({
+                code: 403,
+                type: false,
+                status: "error",
+                error
+            });
+        }
+
+     //   res.json({ ok: "OK" });
     }
 }
 let product = new Products();
