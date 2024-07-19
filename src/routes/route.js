@@ -21,7 +21,11 @@ router.post(
     upload.single("product_img"),
     product.addProduct
 );
-router.put("/admin/update-product/:id",upload.single("product_img"), product.updateProduct);
+router.put(
+    "/admin/update-product/:id",
+    upload.single("product_img"),
+    product.updateProduct
+);
 router.get("/admin/fetch-products", product.fetchProduct);
 router.get("/admin/edit-product/:id", product.editProduct);
 router.get("/admin/delete-product/:id", product.deleteProduct);
@@ -31,5 +35,6 @@ router.get("/products/category-product/:category", product.categoryProduct);
 router.get("/products/all-products", product.allProduct);
 router.get("/products/view-products/:id", product.viewProduct);
 router.post("/products/add-cart", product.addCart);
+router.get("/products/get-cart/:userId", product.getCart);
 
 module.exports = router;

@@ -165,8 +165,29 @@ class Products {
         try {
             const isToken = await User.findOne({ user_token: token });
             if (isToken) {
-                res.json({ ok: "ok" });
-                // const newCart = await new Cart({});
+                const isExist = await Cart.findOne({
+                    user_id: userId,
+                    product_id
+                });
+                if (isExist) {
+                    res.status(503).json({
+                        code: 503,
+                        type: false,
+                        status: "error",
+                        error: "Product Already In Cart"
+                    });
+                } else {
+                    const newCart = await new Cart({
+                        user_id: userId,
+                        product_id,
+                        product_title,
+                        product_img,
+                        price,
+                        quantity
+                    });
+                    await newCart.save();
+                    res.status(200).json({ code: 200, success: "Cart Added" });
+                }
             } else {
                 res.status(403).json({
                     code: 403,
@@ -183,8 +204,28 @@ class Products {
                 error
             });
         }
-
-     //   res.json({ ok: "OK" });
+    }
+    async getCart(req, res) {
+        console.log(req.params);
+        try {
+            const cartList = await Cart.find({
+                 user_id: req.params.userId
+            });
+            res.status(200).json({
+                code: 200,
+                cartList,
+                type: true,
+                status: "success",
+                success: "Everything Is okay"
+            });
+        } catch (error) {
+            res.status(403).json({
+                code: 403,
+                type: false,
+                status: "error",
+                error
+            });
+        }
     }
 }
 let product = new Products();
