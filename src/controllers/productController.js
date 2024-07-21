@@ -15,6 +15,7 @@ class Products {
         const category = data.product_category;
         const title = data.product_title;
         // Validation
+
         if (!data || !productImg) {
             return res.status(400).json({
                 code: 403,
@@ -209,7 +210,7 @@ class Products {
         console.log(req.params);
         try {
             const cartList = await Cart.find({
-                 user_id: req.params.userId
+                user_id: req.params.userId
             });
             res.status(200).json({
                 code: 200,
