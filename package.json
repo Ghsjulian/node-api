@@ -1,16 +1,21 @@
 {
-    "name": "tutorial",
+    "name": "shopping-cart-api",
     "version": "1.0.0",
-    "description": "something...",
+    "description": "This is a rest api for shipping-cart e-commerce website. It has full security and there's no any bugs. It has design for my educational self learning project. I'll use this API in my react e-commerce website which will be connected with this api. Anyway but it has all functionality. It has created using my mobile phone. For more about this api please see below.",
     "main": "index.js",
+    "developer": "Ghs Julian",
+    "dev_email": "ghsjulian@gmail.com",
+    "portfolio": "https://ghsredume.netlify.app",
+    "github": "https://github.com/Ghsjulian",
+    "facebook": "https://web.facebook.con/ghs.julian.85",
     "scripts": {
         "start": "nodemon server.js",
         "dev": "nodemon server.js",
         "build": "npm run build",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
-    "keywords": [],
-    "author": "",
+    "keywords": ["Ghs Julian","Web Developer And Designer"],
+    "author": "Developer - Ghs Julian",
     "license": "ISC",
     "dependencies": {
         "bcrypt-nodejs": "^0.0.3",
