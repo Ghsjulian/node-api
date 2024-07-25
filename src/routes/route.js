@@ -1,6 +1,7 @@
 const express = require("express");
 const user = require("../controllers/userController");
 const product = require("../controllers/productController");
+const order = require("../controllers/orderController");
 const myFunction = require("../auth/functions");
 const isAuth = require("../auth/isAuth");
 const createUpload = require("../auth/multerConfig");
@@ -36,5 +37,10 @@ router.get("/products/all-products", product.allProduct);
 router.get("/products/view-products/:id", product.viewProduct);
 router.post("/products/add-cart", product.addCart);
 router.get("/products/get-cart/:userId", product.getCart);
+
+/* Order Routes Here */
+router.post("/confirm-order", order.AcceptOrder);
+router.get("/get-order/:id", order.getOrderById);
+router.get("/admin/orders", order.AllOrders);
 
 module.exports = router;
