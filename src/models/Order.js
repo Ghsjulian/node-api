@@ -8,6 +8,8 @@ const orderSchema = new mongoose.Schema({
     user_phone: String,
     user_address: String,
     payment_type: String,
+    payment_status : String,
+    products : Array,
     order_date: { type: Date, default: Date.now },
     
 });
