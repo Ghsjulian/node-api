@@ -8,7 +8,9 @@ const orderSchema = new mongoose.Schema({
     user_phone: String,
     user_address: String,
     payment_type: String,
+    total_price : String,
     payment_status : String,
+    message : String,
     products : Array,
     order_date: { type: Date, default: Date.now },
     
