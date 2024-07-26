@@ -42,5 +42,6 @@ router.get("/products/get-cart/:userId", product.getCart);
 router.post("/confirm-order", order.AcceptOrder);
 router.get("/get-order/:id", order.getOrderById);
 router.get("/admin/orders", order.AllOrders);
+router.get("/admin/accept-order/:id", order.saveOrder);
 
 module.exports = router;

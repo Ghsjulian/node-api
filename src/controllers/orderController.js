@@ -38,7 +38,6 @@ class Confirmorder {
     }
     async getOrderById(req, res) {
         try {
-            console.log(req.params.id);
             const order = await Order.findOne({
                 userId: req.params.id
             });
@@ -50,6 +49,18 @@ class Confirmorder {
     async AllOrders(req, res) {
         const order = await Order.find().exec();
         res.json(order);
+    }
+    async saveOrder(req, res) {
+        try {
+            const order = await Order.deleteOne({
+                userId: req.params.id
+            });
+            if(order){
+                res.json({type:true})
+            }
+        } catch (error) {
+            console.log(error);
+        }
     }
 }
 
