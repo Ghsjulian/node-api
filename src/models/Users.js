@@ -12,8 +12,7 @@ const userSchema = new mongoose.Schema({
     user_otp: String,
     user_token: String,
     user_login: Boolean,
-    user_verified: { type: Boolean, default: true },
-    user_type: { type: String, default: "Admin" }
+    user_verified:  Boolean
 });
 
 const User = mongoose.model("User", userSchema, "users");
