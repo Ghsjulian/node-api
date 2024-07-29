@@ -59,7 +59,7 @@ class User {
                 });
             } else {
                 const otp = Math.floor(100000 + Math.random() * 900000);
-                const isSent = await sendEmail(username, email, otp);
+                //  const isSent = await sendEmail(username, email, otp);
                 /* 
                 If any error occurs, it seems failed to send email.
                 In that case you need to hard coding add your email address and app password 
@@ -74,9 +74,7 @@ class User {
                     email,
                     today
                 });
-res.json({encPassword,date,tok})
 
-/*
                 const newUser = new myUser({
                     user_name: username,
                     user_email: email,
@@ -85,7 +83,8 @@ res.json({encPassword,date,tok})
                     user_otp: otp,
                     user_token: tok,
                     user_login: true,
-                    user_verified: false
+                    user_verified: true,
+                    user_type: "User"
                 });
                 const save = await newUser.save();
                 if (save) {
@@ -94,18 +93,17 @@ res.json({encPassword,date,tok})
                     });
                     return res.status(201).json({
                         code: 201,
-                        url: "/api/user/verification",
-                        user: {
+                        data: {
                             userId: currentUser._id,
-                            user_otp: otp,
-                            user_email: email
+                            isLogin: true,
+                            token: tok,
+                            date: today
                         },
                         type: true,
-                        status: "pending",
-                        success: "Verify Your Email Address"
+                        status: "success",
+                        success: "User Registration Successfully"
                     });
                 }
-                */
             }
         } catch (err) {
             console.log(err);
