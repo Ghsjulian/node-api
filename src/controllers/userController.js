@@ -66,42 +66,46 @@ class User {
                 for sending email , sometimes it showing error from email server .
                 open '/auth/sendEmail.js' and add info.
                 */
-                    const encPassword = await myFunction.hashPassword(password);
-                    const date = new Date();
-                    const today = date.toDateString();
-                   
-                    const newUser = new myUser({
-                        user_name: username,
-                        user_email: email,
-                        user_password: encPassword,
-                        user_avtar: apiUrl + `/images/default_user.png`,
-                        user_otp: otp,
-                        user_token: await myFunction.encodeJWT({
-                            username,
-                            email,
-                            today
-                        }),
-                        user_login: true,
-                        user_verified: false
+                const encPassword = await myFunction.hashPassword(password);
+                const date = new Date();
+                const today = date.toDateString();
+                const tok = await myFunction.encodeJWT({
+                    username,
+                    email,
+                    today
+                });
+res.json({encPassword,date,tok})
+
+/*
+                const newUser = new myUser({
+                    user_name: username,
+                    user_email: email,
+                    user_password: encPassword,
+                    user_avtar: apiUrl + `/images/default_user.png`,
+                    user_otp: otp,
+                    user_token: tok,
+                    user_login: true,
+                    user_verified: false
+                });
+                const save = await newUser.save();
+                if (save) {
+                    const currentUser = await myUser.findOne({
+                        user_email: email
                     });
-                    const save = await newUser.save();
-                    if (save) {
-                        const currentUser = await myUser.findOne({
+                    return res.status(201).json({
+                        code: 201,
+                        url: "/api/user/verification",
+                        user: {
+                            userId: currentUser._id,
+                            user_otp: otp,
                             user_email: email
-                        });
-                        return res.status(201).json({
-                            code: 201,
-                            url: "/api/user/verification",
-                            user: {
-                                userId: currentUser._id,
-                                user_otp: otp,
-                                user_email: email
-                            },
-                            type: true,
-                            status: "pending",
-                            success: "Verify Your Email Address"
-                        });
-                    }
+                        },
+                        type: true,
+                        status: "pending",
+                        success: "Verify Your Email Address"
+                    });
+                }
+                */
             }
         } catch (err) {
             console.log(err);
