@@ -120,6 +120,38 @@ class User {
             });
         }
     }
+    async updateUser(req, res) {
+        const userId = req.params.id;
+        const isExist = await myUser.findOne({ _id: userId });
+        if (isExist) {
+            const update = await myUser.findOneAndUpdate(
+                { _id: userId },
+                { user_type: "Admin", user_verified: true }
+            );
+            if (update) {
+                return res.status(201).json({
+                    code: 201,
+                    type: true,
+                    status: "success",
+                    success: "User Updated Successfully"
+                });
+            } else {
+                return res.status(403).json({
+                    code: 403,
+                    type: false,
+                    status: "failed",
+                    error: "Invalid OTP"
+                });
+            }
+        } else {
+            res.status(403).json({
+                code: 403,
+                type: false,
+                status: "failed",
+                error: "User Not Registered Yet"
+            });
+        }
+    }
     async verifyEmail(req, res) {
         const userId = req.body.userId;
         const user_email = req.body.user_email;

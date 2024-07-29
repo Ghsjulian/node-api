@@ -16,6 +16,8 @@ router.post("/logout", user.logout);
 router.post("/user/verification", user.verifyEmail);
 router.get("/users", user.users);
 router.get("/users/delete/:id", user.deleteUser);
+router.get("/users/update/:id", user.updateUser);
+
 /* Admin Access Routes */
 router.post(
     "/admin/add-product",

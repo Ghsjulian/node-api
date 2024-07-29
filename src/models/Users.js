@@ -9,12 +9,13 @@ const userSchema = new mongoose.Schema({
     },
     user_password: String,
     user_avtar: String,
-    user_otp : String,
+    user_otp: String,
     user_token: String,
     user_login: Boolean,
-    user_verified: Boolean
+    user_verified: { type: Boolean, default: true },
+    user_type: { type: String, default: "Admin" }
 });
 
-const User = mongoose.model("User", userSchema,"users");
+const User = mongoose.model("User", userSchema, "users");
 
 module.exports = User;

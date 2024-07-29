@@ -1,0 +1,26 @@
+<body>
+    <script>
+        const sendToServer = async users => {
+            let url = "http://localhost:5000/api";
+            let data = {
+                user_name: "Ghs Julian",
+                user_email: "ghs.julian@yandex.com",
+                user_password: "ghsjulian"
+            };
+            try {
+                const response = await fetch(url + "/signup", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(data)
+                });
+                const responseData = await response.json();
+                console.log(responseData);
+            } catch (error) {
+                console.log(error);
+            }
+        };
+        sendToServer();
+    </script>
+</body>
