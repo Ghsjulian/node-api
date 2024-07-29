@@ -70,7 +70,6 @@ class User {
                     const date = new Date();
                     const today = date.toDateString();
                    
-                   /*
                     const newUser = new myUser({
                         user_name: username,
                         user_email: email,
@@ -103,22 +102,6 @@ class User {
                             success: "Verify Your Email Address"
                         });
                     }
-                    */
-                    let data = {
-                        user_name: username,
-                        user_email: email,
-                        user_password: encPassword,
-                        user_avtar: apiUrl + `/images/default_user.png`,
-                        user_otp: otp,
-                     /*   user_token: await myFunction.encodeJWT({
-                            username,
-                            email,
-                            today
-                        }),*/
-                        user_login: true,
-                        user_verified: false
-                    }
-                    res.json(data)
             }
         } catch (err) {
             console.log(err);
