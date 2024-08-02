@@ -3,7 +3,7 @@ const dotenv = require("dotenv");
 dotenv.config({ path: "../../.env" }); // Load environment variables from the root directory
 
 const serverEmail = "ghsjulian@gmail.com";
-const emailPass = "ukbr lotx akke xtkx"
+const emailPass = "XXXXXX XXXXX XXXXX"
 
 const sendEmail = async (userName, userEmail, otp) => {
   let transporter = nodemailer.createTransport({
